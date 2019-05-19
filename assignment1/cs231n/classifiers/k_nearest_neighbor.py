@@ -2,6 +2,7 @@ from builtins import range
 from builtins import object
 import numpy as np
 from past.builtins import xrange
+from collections import Counter
 
 
 class KNearestNeighbor(object):
@@ -77,9 +78,8 @@ class KNearestNeighbor(object):
                 # not use a loop over dimension, nor use np.linalg.norm().          #
                 #####################################################################
                 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+                dists[i,j] = np.sqrt(np.sum(np.square(self.X_train[j] - X[i,:])))
 
-                print(((X[i] ** 2) + (self.X_train[j] ** 2)) **(1/2))
-                
                 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
 
@@ -165,7 +165,10 @@ class KNearestNeighbor(object):
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            # find the K lowest numbers in the ith row of the dists array TESTED
+            k_lowest_indecies = np.argsort(dists[i])[:k]
+            #these are the indecies in the distance array with the lowest dinstance
+            closest_y = self.y_train[k_lowest_indecies] #TESTED
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
             #########################################################################
@@ -176,8 +179,12 @@ class KNearestNeighbor(object):
             # label.                                                                #
             #########################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+            occurances = np.zeros(10)
+            for label in closest_y:
+                occurances[label]+=1
 
-            pass
+            y_pred[i] = np.argmax(occurances) #TESTED
+
 
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
