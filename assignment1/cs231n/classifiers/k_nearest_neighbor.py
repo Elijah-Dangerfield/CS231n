@@ -78,7 +78,7 @@ class KNearestNeighbor(object):
                 # not use a loop over dimension, nor use np.linalg.norm().          #
                 #####################################################################
                 # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-                dists[i,j] = np.sqrt(np.sum(np.square(self.X_train[j] - X[i,:])))
+                dists[i, j] = np.sqrt(np.sum(np.square(self.X_train[j] - X[i,:])))
 
                 # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
@@ -102,8 +102,14 @@ class KNearestNeighbor(object):
             #######################################################################
             # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-            pass
+            #Train shape (5000, 3072)    test shape (500, 3072)
+            #dists shape(500,5000)
+            # our image is X[i,:]
+            # and we want to compare this to every row in the training set to compute the distance
+            # and store in dists[i,:]
 
+            # the smaller array (X[i]) is broadcst to to the shape of X train
+            dists[i] = np.sqrt(np.sum((np.square(self.X_train - X[i])), axis=1))
             # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
 
@@ -132,7 +138,15 @@ class KNearestNeighbor(object):
         #########################################################################
         # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
-        pass
+        # Train shape (5000, 3072)    test shape (500, 3072)
+        # dists shape(500,5000)
+        # creates col vector holding the norm (without sqrt) of each row(pic) SHAPE: (500,1)
+        test_mag = (X ** 2).sum(axis=1)[:, np.newaxis]
+        # creates col vector holding the norm (without sqrt) of each row(pic) SHAPE(5000,1)
+        train_mag = (self.X_train ** 2).sum(axis=1)
+
+        dists = np.sqrt(
+            train_mag + test_mag - 2 * X.dot(self.X_train.T))
 
         # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
         return dists
